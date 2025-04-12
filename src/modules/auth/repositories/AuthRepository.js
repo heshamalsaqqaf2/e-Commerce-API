@@ -1,5 +1,4 @@
-﻿// src/modules/auth/repositories/AuthRepository.js
-import User from '../../../models/User.js';
+﻿import User from '../../../models/User.js';
 import IAuthRepository from '../interfaces/IAuthRepository.js';
 import crypto from 'crypto';
 

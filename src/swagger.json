@@ -1,0 +1,174 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Auth System API",
+    "description": "API for managing user authentication and authorization.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1/auth/",
+      "description": "Local development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication related endpoints"
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "minLength": 8 }
+                },
+                "required": ["username", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "type": "object" },
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid input"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login an existing user",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": { "type": "object" },
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized, invalid credentials"
+          }
+        }
+      }
+    },
+    "/verify": {
+      "get": {
+        "summary": "Verify the current user's token",
+        "tags": ["Auth"],
+        "responses": {
+          "200": {
+            "description": "Token is valid"
+          },
+          "401": {
+            "description": "Unauthorized, invalid token"
+          }
+        }
+      }
+    },
+    "/forgot-password": {
+      "post": {
+        "summary": "Request password reset",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" }
+                },
+                "required": ["email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset request successful"
+          },
+          "400": {
+            "description": "Bad request, invalid input"
+          }
+        }
+      }
+    },
+    "/reset-password": {
+      "post": {
+        "summary": "Reset user password",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": { "type": "string" },
+                  "password": { "type": "string", "minLength": 8 }
+                },
+                "required": ["token", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successful"
+          },
+          "400": {
+            "description": "Bad request, invalid input"
+          }
+        }
+      }
+    }
+  }
+}
