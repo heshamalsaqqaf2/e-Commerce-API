@@ -4,4 +4,6 @@
   verifyUser() { }
   createPasswordResetToken() { }
   resetPassword() { }
+
+  createSession() { }
 }

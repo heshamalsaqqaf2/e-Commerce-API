@@ -9,7 +9,8 @@ export const registerSchema = Joi.object({
     .required()
     .messages({
       'string.pattern.base': 'Password must contain letters and numbers'
-    })
+    }),
+    
 });
 
 export const loginSchema = Joi.object({

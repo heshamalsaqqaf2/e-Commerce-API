@@ -1,6 +1,7 @@
 ﻿import User from '../../../models/User.js';
 import IAuthRepository from '../interfaces/IAuthRepository.js';
 import crypto from 'crypto';
+import Session from '../../../models/Session.js';
 
 class AuthRepository extends IAuthRepository {
   async createUser(userData) {
@@ -42,6 +43,14 @@ class AuthRepository extends IAuthRepository {
     await user.save();
     return user;
   }
+
+  async createSession(userId, sessionData) {
+    const user = await User.findById(userId);
+    if (!user) return null; 
+    return Session.create(sessionData);
+  }
+
+
 }
 
 export default new AuthRepository();

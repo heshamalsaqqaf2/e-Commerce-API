@@ -99,8 +99,8 @@ const userSchema = new mongoose.Schema({
 
 
 //إضافة الفهارس  Indexing
-userSchema.index({ email: 1 }, { unique: true, sparse: true });
-userSchema.index({ phone: 1 }, { unique: true, sparse: true });
+// userSchema.index({ email: 1 }, { unique: true, sparse: true });
+// userSchema.index({ phone: 1 }, { unique: true, sparse: true });
 
 
 // تشفير الباسورد قبل الحفظ

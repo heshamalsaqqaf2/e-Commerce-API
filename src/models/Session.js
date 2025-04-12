@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-const mongoose = require('mongoose');
-
 const sessionSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -11,7 +9,7 @@ const sessionSchema = new mongoose.Schema({
   device: {
     type: {
       type: String,
-      enum: ['mobile', 'desktop', 'tablet']
+      enum: ['mobile', 'desktop', 'tablet','web']
     },
     os: String,
     browser: String,

@@ -4,6 +4,7 @@ import AuthRepository from '../repositories/AuthRepository.js';
 import { generateToken } from '../../../core/utils/jwt.util.js';
 import AppException from '../../../core/exceptions/AppException.js';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../../../core/utils/email.util.js';
+import Session from '../../../models/Session.js';
 
 
 class AuthService extends IAuthService {
@@ -19,7 +20,16 @@ class AuthService extends IAuthService {
       roles: user.roles
     });
 
-    return { user, token };
+    const session = await AuthRepository.createSession(user._id, {
+      "userId": user._id, 
+      "device": {"type": "web", "browser": "chrome"},
+       "accessToken": token,
+        "refreshToken": token, 
+        "expiresAt": new Date(Date.now() + 3600000),
+         "isRevoked": false});
+
+    if (!session) throw new AppException('Session creation failed', 500);
+    return { user, token,session };
   }
 
   async login({ email, password }) {
