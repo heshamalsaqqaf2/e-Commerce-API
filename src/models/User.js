@@ -1,46 +1,113 @@
-﻿import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
     unique: true,
-    minlength: 3
+    required: [true, 'Username is required']
   },
   email: {
     type: String,
-    required: true,
     unique: true,
-    validate: {
-      validator: (v) => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v),
-      message: 'Invalid email format'
-    }
+    sparse: true,
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Invalid email format']
+  },
+  phone: {
+    type: String,
+    unique: true,
+    sparse: true
   },
   password: {
     type: String,
-    required: true,
-    minlength: 8,
+    required: [true, 'Password is required'],
+    minlength: [8, 'Password must be at least 8 characters'],
     select: false
   },
-  roles: {
-    type: [String],
-    enum: ['user', 'admin'],
-    default: ['user']
+  profile: {
+    fullName: String,
+    avatar: String,
+    bio: String,
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other']
+    },
+    birthdate: Date
   },
-  isVerified: {
-    type: Boolean,
-    default: false
+  socialAccounts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'SocialAccount'
+  }],
+  roles: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role'
+  }],
+  settings: {
+    isPrivate: {
+      type: Boolean,
+      default: false
+    },
+    twoFactorAuth: {
+      type: Boolean,
+      default: false
+    },
+    language: {
+      type: String,
+      default: 'en'
+    },
+    notificationPreferences: {
+      email: Boolean,
+      push: Boolean,
+      sms: Boolean
+    }
   },
-  verificationToken: String,
-  passwordResetToken: String,
-  passwordResetExpires: Date
+  stats: {
+    followers: {
+      type: Number,
+      default: 0
+    },
+    following: {
+      type: Number,
+      default: 0
+    },
+    posts: {
+      type: Number,
+      default: 0
+    }
+  },
+  security: {
+    emailVerified: {
+      type: Boolean,
+      default: false
+    },
+    verificationToken: String,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+    lastPasswordChange: Date
+  },
+  status: {
+    isActive: {
+      type: Boolean,
+      default: true
+    },
+    isBanned: {
+      type: Boolean,
+      default: false
+    }
+  }
 }, { timestamps: true });
 
-userSchema.pre('save', async function (next) {
+
+//إضافة الفهارس  Indexing
+userSchema.index({ email: 1 }, { unique: true, sparse: true });
+userSchema.index({ phone: 1 }, { unique: true, sparse: true });
+
+
+// تشفير الباسورد قبل الحفظ
+userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
-export default mongoose.model('User', userSchema);
+export default  mongoose.model('User', userSchema);
